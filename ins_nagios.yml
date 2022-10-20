@@ -1,0 +1,29 @@
+---
+
+- hosts: all
+  become: true
+  pre_tasks:
+
+  - name: install updates (CentOS)
+    tags: always
+    dnf:
+      update_only: yes
+      update_cache: yes
+    when: ansible_distribution == "CentOS"
+
+  - name: isntall updates (Ubuntu)
+    tags: always
+    apt:
+      upgrade: dist
+      update_cache: yes
+    when: ansible_distribution == "Ubuntu"
+
+- hosts: all
+  vars:
+    is_centos "{{ ansible_distribution|lower }}" == "CentOS"
+    is_ubuntu "{ {ansible_distribution|lower }}" == "Ubuntu"
+  vars_files:
+    - vars/{{ ansible_distribution|lower }}.yml
+  roles:
+  - apache
+  - nagios-src
